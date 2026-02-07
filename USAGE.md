@@ -133,3 +133,5 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 | **aff.SceneControl**| `scenecontrol(...)`| `time`, `type`, `param1`, `param2` |
 | **aff.Flick** | `flick(...)` | `time`, `x`, `y`, `vx`, `vy` |
 | **aff.TimingGroup** | `timinggroup(...){}` | `options`, `notes` |
+
+> **注意**：所有物件的通常坐标范围为 x 取 -0.5 到 1.5，y 取 0 到 1。
