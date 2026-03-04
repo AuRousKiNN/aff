@@ -134,7 +134,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
     *   对应 `TimingPointDensityFactor:y` 中的 `y`。
     *   全局音弧与长条的物量密度调整系数。默认值为 1.0。
 
-### 4.2. Timing (定时器)
+### 4.2. Timing
 
 对应 AFF 语法: `timing(t,bpm,beats);`
 
@@ -147,7 +147,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
     *   对应 `beats`。每小节的四分音符个数（拍数）。
     *   例如 `4.00` 代表 4/4 拍。注意：当 `bpm` 不为 0 时，`beats` 不可为 0。
 
-### 4.3. Tap (地面 Note)
+### 4.3. Tap
 
 对应 AFF 语法: `(t,lane);`
 
@@ -156,9 +156,9 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`lane` (float)**:
     *   对应 `lane`。物件所在轨道。
     *   **0-5**: 轨道编号（0 为最左，5 为最右）。正常模式下使用 1-4 轨。
-    *   **小数**: 表示精确坐标定位。映射公式为 `-0.5 + lane * 2`。建议仅用于演出。
+    *   **小数**: 表示精确坐标定位。映射公式为 `-0.5 + lane * 2`。
 
-### 4.4. Hold (地面长条)
+### 4.4. Hold
 
 对应 AFF 语法: `hold(t1,t2,lane);`
 
@@ -169,7 +169,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`lane` (float)**:
     *   对应 `lane`。物件所在轨道（同 `Tap`）。
 
-### 4.5. Arc (音弧)
+### 4.5. Arc
 
 对应 AFF 语法: `arc(t1,t2,x1,x2,easing,y1,y2,color,hitsound,arctype,smoothness)[...];`
 
@@ -204,14 +204,14 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`arctaps` (list[Arctap])**:
     *   对应 `[...]` 中的 `arctap(tn)`。该 Arc 上附着的天键列表。
 
-### 4.6. Arctap (天键)
+### 4.6. Arctap
 
 对应 AFF 语法: `arctap(t)` (位于 Arc 内部)
 
 *   **`time` (int)**:
     *   对应 `t`。天键的时间点。必须在所属 Arc 的时间范围内。
 
-### 4.7. Camera (相机控制)
+### 4.7. Camera
 
 对应 AFF 语法: `camera(t,x,y,z,xozAng,yozAng,xoyAng,ease,duration);`
 
@@ -235,7 +235,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`duration` (int)**:
     *   对应 `duration`。持续时间（毫秒）。
 
-### 4.8. SceneControl (场景控制)
+### 4.8. SceneControl
 
 对应 AFF 语法: `scenecontrol(t,type,param1,param2);`
 
@@ -249,7 +249,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`param2` (int | None)**:
     *   对应 `param2`。可选参数 2（如目标 Alpha 值）。
 
-### 4.9. TimingGroup (定时组)
+### 4.9. TimingGroup
 
 对应 AFF 语法: `timinggroup(options){ ... };`
 
@@ -261,7 +261,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`notes` (list[AffNote])**:
     *   对应 `{ ... }` 内部的内容。包含该组内的所有物件。
 
-### 4.10. Flick (Flick Note)
+### 4.10. Flick
 
 对应 AFF 语法: `flick(t,x,y,vx,vy);` (实验性功能)
 

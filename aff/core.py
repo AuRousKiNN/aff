@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 import re
 
 # ==============================================================================
-# 1. 标识信息 (Header Info)
+# 1. Header
 # ==============================================================================
 
 @dataclass
@@ -27,7 +27,7 @@ class AffHeader:
         return f"AudioOffset:{self.audio_offset}\nTimingPointDensityFactor:{self.timing_point_density_factor:.2f}\n-"
 
 # ==============================================================================
-# 3. Timing (定时器)
+# 3. Timing
 # ==============================================================================
 
 @dataclass
@@ -51,7 +51,7 @@ class Timing:
         return f"timing({self.time},{self.bpm:.2f},{self.beats:.2f});"
 
 # ==============================================================================
-# 4. 地面物件 (Tap & Hold)
+# 4. 地面物件
 # ==============================================================================
 
 @dataclass
@@ -93,7 +93,7 @@ class Hold:
         return f"hold({self.start_time},{self.end_time},{lane_str});"
 
 # ==============================================================================
-# 5. Arc & 天空音符 (Arctap)
+# 5. Arc and Arctap
 # ==============================================================================
 
 @dataclass
@@ -165,6 +165,16 @@ class Arc:
     当 arctype=true 时，在 Arc 后接方括号定义。
     """
 
+    def __post_init__(self):
+        valid_easings = {'b', 's', 'si', 'so', 'siso', 'sisi', 'soso', 'sosi'}
+        if self.easing not in valid_easings:
+            raise ValueError(f"Invalid easing: {self.easing}. Must be one of {valid_easings}")
+        if self.color not in {0, 1, 2, 3}:
+            raise ValueError(f"Invalid color: {self.color}. Must be 0, 1, 2, or 3")
+        for tap in self.arctaps:
+            if not (self.start_time <= tap.time <= self.end_time):
+                raise ValueError(f"Arctap time {tap.time} is outside the Arc's time range [{self.start_time}, {self.end_time}]")
+
     def to_aff(self) -> str:
         smoothness_str = f",{int(self.smoothness)}" if self.smoothness is not None else ""
         base = f"arc({self.start_time},{self.end_time},{self.start_x:.2f},{self.end_x:.2f},{self.easing},{self.start_y:.2f},{self.end_y:.2f},{self.color},{self.hitsound},{self.arctype}{smoothness_str})"
@@ -175,7 +185,7 @@ class Arc:
             return f"{base};"
 
 # ==============================================================================
-# 6. Camera (相机)
+# 6. Camera
 # ==============================================================================
 
 @dataclass
@@ -214,7 +224,7 @@ class Camera:
         return f"camera({self.time},{self.trans_x:.2f},{self.trans_y:.2f},{self.trans_z:.2f},{self.angle_xoz:.2f},{self.angle_yoz:.2f},{self.angle_xoy:.2f},{self.easing},{self.duration});"
 
 # ==============================================================================
-# 7. Scenecontrol (场景控制)
+# 7. Scenecontrol
 # ==============================================================================
 
 @dataclass
@@ -245,7 +255,7 @@ class SceneControl:
         return f"scenecontrol({self.time},{self.type}{params});"
 
 # ==============================================================================
-# 9. Flick (未正式应用)
+# 9. Flick
 # ==============================================================================
 
 @dataclass
@@ -272,7 +282,7 @@ class Flick:
         return f"flick({self.time},{self.x:.2f},{self.y:.2f},{self.vx:.2f},{self.vy:.2f});"
 
 # ==============================================================================
-# 8. Timinggroup (定时组)
+# 8. Timinggroup
 # ==============================================================================
 
 @dataclass
