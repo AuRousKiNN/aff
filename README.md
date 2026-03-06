@@ -1,75 +1,61 @@
-# 用法指南
+# aff-parser
 
-本软件包 (`aff`) 提供了一套用于处理 Arcaea File Format (AFF) 谱面的 Python 工具库。
+`aff-parser` 提供了一套用于解析、处理和生成 Arcaea File Format (AFF) 谱面的 Python 工具库。
 
-## 1. 引入库
+## 特性 (Features)
 
-将 `aff` 文件夹放置在您的项目目录下，并在 Python 脚本中引入：
+- **解析与序列化**：轻松地将 `.aff` 文件读取为 Python 对象，或将 Python 对象输出为标准的 AFF 格式字符串。
+- **全物件支持**：完整支持 Tap, Hold, Arc, Arctap, Camera, SceneControl, TimingGroup 等几乎所有的 AFF 谱面物件。
+- **类型安全**：核心代码基于 `dataclass` 构建，支持严格的 Mypy 类型检查，提供良好的 IDE 提示。
+- **易于修改**：通过面向对象的方式轻松修改、遍历和分析现有谱面。
+
+## 安装 (Installation)
+
+目前推荐通过源码进行本地安装。支持 Python 3.10 及以上版本。
+
+```bash
+# 克隆仓库
+git clone <repository_url>
+cd aff
+
+# 使用 pip 进行可编辑安装
+python -m pip install -e .
+```
+
+## 快速开始 (Quick Start)
+
+### 1. 读取谱面 (Load)
 
 ```python
 import aff
-```
 
-## 2. 核心功能
-
-### 读取谱面 (Load)
-
-**方式 1：直接从文件路径读取 (推荐)**
-
-```python
+# 推荐：直接从文件路径读取
 chart = aff.from_file("path/to/chart.aff")
-```
 
-**方式 2：从文件对象读取**
-
-```python
+# 从文件对象读取
 with open("path/to/chart.aff", "r", encoding="utf-8") as f:
     chart = aff.load(f)
-```
 
-**方式 3：从字符串读取**
-
-```python
+# 从字符串读取
 raw_content = "..."
 chart = aff.loads(raw_content)
 ```
 
-### 写入谱面 (Dump)
+### 2. 访问和修改数据
 
-**方式 1：写入到文件对象**
-
-```python
-# 将 chart 对象写入到 output.aff
-with open("output.aff", "w", encoding="utf-8") as f:
-    aff.dump(chart, f)
-```
-
-**方式 2：序列化为字符串**
-
-```python
-# 获取格式化后的 AFF 字符串
-aff_string = aff.dumps(chart)
-print(aff_string)
-```
-
-## 3. 谱面操作示例
-
-一旦读取了谱面（返回 `aff.AffChart` 对象），您就可以访问其属性进行修改或分析。
-
-### 访问数据
+一旦读取了谱面（返回 `aff.AffChart` 对象），就可以访问其属性进行修改或分析。
 
 ```python
 import aff
 
 chart = aff.from_file("song.aff")
 
-# 1. 访问头部信息
+# 访问头部信息
 print(f"AudioOffset: {chart.header.audio_offset}")
 print(f"Density: {chart.header.timing_point_density_factor}")
 
-# 2. 遍历物件
+# 遍历物件
 for note in chart.notes:
-    # 判断物件类型
     if isinstance(note, aff.Timing):
         print(f"Timing point: BPM {note.bpm} at {note.time}ms")
     elif isinstance(note, aff.Tap):
@@ -78,9 +64,9 @@ for note in chart.notes:
         print(f"Arc: {note.start_time} -> {note.end_time}, Type: {note.arctype}")
 ```
 
-### 创建新谱面
+### 3. 创建与写入谱面 (Dump)
 
-您也可以从零开始构建谱面。所有数据类都可以通过 `aff` 包直接访问。
+您可以从零开始构建谱面，并将其写入文件或序列化为字符串。
 
 ```python
 import aff
@@ -88,40 +74,35 @@ import aff
 # 创建头部
 header = aff.AffHeader(audio_offset=0, timing_point_density_factor=1.0)
 
-# 创建物件列表
-notes = []
-
-# 添加 Timing (必须)
-notes.append(aff.Timing(time=0, bpm=160.0, beats=4.0))
-
-# 添加 Note (Tap)
-notes.append(aff.Tap(time=1000, lane=1))  # 1轨道
-notes.append(aff.Tap(time=1200, lane=2))  # 2轨道
-
-# 添加 Hold
-notes.append(aff.Hold(start_time=1500, end_time=2000, lane=3))
-
-# 添加 Arc
-notes.append(aff.Arc(
-    start_time=2000, end_time=3000,
-    start_x=0.0, end_x=1.0, easing='s',
-    start_y=1.0, end_y=1.0,
-    color=0, hitsound='none', arctype='false'
-))
+# 组建物件列表
+notes = [
+    aff.Timing(time=0, bpm=160.0, beats=4.0),
+    aff.Tap(time=1000, lane=1),
+    aff.Hold(start_time=1500, end_time=2000, lane=3),
+    aff.Arc(
+        start_time=2000, end_time=3000,
+        start_x=0.0, end_x=1.0, easing='s',
+        start_y=1.0, end_y=1.0,
+        color=0, hitsound='none', arctype='false'
+    )
+]
 
 # 组装 Chart 对象
 chart = aff.AffChart(header=header, notes=notes)
 
-# 保存
+# 写入到文件
 with open("new_chart.aff", "w", encoding="utf-8") as f:
     aff.dump(chart, f)
+
+# 或者直接获取字符串
+print(aff.dumps(chart))
 ```
 
-## 4. 对象参考
+## API / 物件参考 (API Reference)
 
 所有对象均位于 `aff` 命名空间下。以下是各对象的构造函数参数及其对应 AFF 语法的详细说明。
 
-### 4.1. AffHeader (头部信息)
+### AffHeader (头部信息)
 
 对应 AFF 中的 `AudioOffset` 和 `TimingPointDensityFactor`。
 
@@ -134,7 +115,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
     *   对应 `TimingPointDensityFactor:y` 中的 `y`。
     *   全局音弧与长条的物量密度调整系数。默认值为 1.0。
 
-### 4.2. Timing
+### Timing
 
 对应 AFF 语法: `timing(t,bpm,beats);`
 
@@ -147,7 +128,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
     *   对应 `beats`。每小节的四分音符个数（拍数）。
     *   例如 `4.00` 代表 4/4 拍。注意：当 `bpm` 不为 0 时，`beats` 不可为 0。
 
-### 4.3. Tap
+### Tap
 
 对应 AFF 语法: `(t,lane);`
 
@@ -158,7 +139,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
     *   **0-5**: 轨道编号（0 为最左，5 为最右）。正常模式下使用 1-4 轨。
     *   **小数**: 表示精确坐标定位。映射公式为 `-0.5 + lane * 2`。
 
-### 4.4. Hold
+### Hold
 
 对应 AFF 语法: `hold(t1,t2,lane);`
 
@@ -169,7 +150,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`lane` (float)**:
     *   对应 `lane`。物件所在轨道（同 `Tap`）。
 
-### 4.5. Arc
+### Arc
 
 对应 AFF 语法: `arc(t1,t2,x1,x2,easing,y1,y2,color,hitsound,arctype,smoothness)[...];`
 
@@ -204,14 +185,14 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`arctaps` (list[Arctap])**:
     *   对应 `[...]` 中的 `arctap(tn)`。该 Arc 上附着的天键列表。
 
-### 4.6. Arctap
+### Arctap
 
 对应 AFF 语法: `arctap(t)` (位于 Arc 内部)
 
 *   **`time` (int)**:
     *   对应 `t`。天键的时间点。必须在所属 Arc 的时间范围内。
 
-### 4.7. Camera
+### Camera
 
 对应 AFF 语法: `camera(t,x,y,z,xozAng,yozAng,xoyAng,ease,duration);`
 
@@ -235,7 +216,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`duration` (int)**:
     *   对应 `duration`。持续时间（毫秒）。
 
-### 4.8. SceneControl
+### SceneControl
 
 对应 AFF 语法: `scenecontrol(t,type,param1,param2);`
 
@@ -249,7 +230,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`param2` (int | None)**:
     *   对应 `param2`。可选参数 2（如目标 Alpha 值）。
 
-### 4.9. TimingGroup
+### TimingGroup
 
 对应 AFF 语法: `timinggroup(options){ ... };`
 
@@ -261,7 +242,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`notes` (list[AffNote])**:
     *   对应 `{ ... }` 内部的内容。包含该组内的所有物件。
 
-### 4.10. Flick
+### Flick
 
 对应 AFF 语法: `flick(t,x,y,vx,vy);` (实验性功能)
 
@@ -272,5 +253,19 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 *   **`vx` (float)**, **`vy` (float)**:
     *   对应 `vx, vy`。滑动方向向量。
 
-**注意**
- - Timing里的bpm是用来决定谱面流速的，它与实际曲目的bpm无关。当timing bpm和歌曲bpm的比值为1时为标准谱面流速，比值为2时快一倍，比值为0.5时为慢一半等。
+> **注意**：Timing 里的 BPM 用来决定谱面流速，与实际曲目的 BPM 无关。
+
+## 开发与测试 (Development)
+
+本项目使用 `pytest` 进行测试，使用 `mypy` 进行检查。
+
+```bash
+# 运行测试
+python -m pytest
+
+# 运行基础冒烟测试
+python test_real_chart.py
+
+# 运行严格的类型检查
+python -m mypy aff
+```

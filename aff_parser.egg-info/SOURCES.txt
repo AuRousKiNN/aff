@@ -1,7 +1,0 @@
-pyproject.toml
-aff/__init__.py
-aff/core.py
-aff_parser.egg-info/PKG-INFO
-aff_parser.egg-info/SOURCES.txt
-aff_parser.egg-info/dependency_links.txt
-aff_parser.egg-info/top_level.txt

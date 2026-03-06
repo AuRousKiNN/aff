@@ -1,6 +1,0 @@
-Metadata-Version: 2.4
-Name: aff-parser
-Version: 0.1.0
-Summary: Arcaea File Format (AFF) parser and objects
-Author: Aurous
-Requires-Python: >=3.10
