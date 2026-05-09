@@ -98,7 +98,7 @@ with open("new_chart.aff", "w", encoding="utf-8") as f:
 print(aff.dumps(chart))
 ```
 
-## API / 物件参考 (API Reference)
+## 物件参考 (Note Reference)
 
 所有对象均位于 `aff` 命名空间下。以下是各对象的构造函数参数及其对应 AFF 语法的详细说明。
 
