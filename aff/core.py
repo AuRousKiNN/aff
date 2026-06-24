@@ -176,7 +176,7 @@ class Arc:
                 raise ValueError(f"Arctap time {tap.time} is outside the Arc's time range [{self.start_time}, {self.end_time}]")
 
     def to_aff(self) -> str:
-        smoothness_str = f",{int(self.smoothness)}" if self.smoothness is not None else ""
+        smoothness_str = f",{self.smoothness:.2f}" if self.smoothness is not None else ""
         base = f"arc({self.start_time},{self.end_time},{self.start_x:.2f},{self.end_x:.2f},{self.easing},{self.start_y:.2f},{self.end_y:.2f},{self.color},{self.hitsound},{self.arctype}{smoothness_str})"
         if self.arctaps:
             taps_str = ",".join([t.to_aff() for t in self.arctaps])
