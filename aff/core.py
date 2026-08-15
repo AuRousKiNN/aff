@@ -354,7 +354,7 @@ class AffParser:
             return Hold(int(m.group(1)), int(m.group(2)), float(m.group(3)))
 
         # Arc: arc(t1,t2,x1,x2,easing,y1,y2,color,hitsound,arctype[,smoothness])[arctap(t),...];
-        if m := re.match(r"arc\((\d+),(\d+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),(\w+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),(\d+),(\w+),(\w+)(?:,(\d+))?\)(?:\[(.*)\])?;?", line):
+        if m := re.match(r"arc\((\d+),(\d+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),(\w+),([-+]?\d*\.?\d+),([-+]?\d*\.?\d+),(\d+),(\w+),(\w+)(?:,([-+]?\d*\.?\d+))?\)(?:\[(.*)\])?;?", line):
             arctaps = []
             if m.group(12):
                 tap_matches = re.findall(r"(?:arctap|at)\((\d+)\)", m.group(12))
