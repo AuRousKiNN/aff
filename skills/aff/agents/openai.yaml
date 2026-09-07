@@ -1,0 +1,4 @@
+interface:
+  display_name: "AFF 谱面工具"
+  short_description: "解析、修改与生成 Arcaea AFF 谱面文件的 Python 使用指南"
+  default_prompt: "使用 $aff 读取并修改这个 Arcaea AFF 谱面。"
